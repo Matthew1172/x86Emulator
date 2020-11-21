@@ -58,27 +58,23 @@ void printBits(size_t const size, void const* const ptr)
 }
 
 void addreg8(byte& reg8a, byte& reg8b) {
-	if (reg8a > 0xFF - reg8b) {
-		flags = flags | (1 << 6);
-	}
+	if (reg8a > 0xFF - reg8b) flags = flags | (1 << 6);
 	reg8a += reg8b;
 	if(!reg8a) flags = flags | (1 << 5);
 }
 
 void addreg16(word& reg16a, word& reg16b, byte& reg8al, byte& reg8ah, byte& reg8bl, byte& reg8bh) {
-	if (reg16a > 0xFFFF - reg16b) {
-		flags = flags | (1 << 6);
-	}
+	if (reg16a > 0xFFFF - reg16b) flags = flags | (1 << 6);
 	reg16a += reg16b;
 	reg8al = reg16a & 0xFF;
 	reg8ah = reg16a >> 8 & 0xFF;
+	if (!reg16a) flags = flags | (1 << 5);
 }
 
 void addreg16s(word& reg16a, word& reg16b) {
-	if (reg16a > 0xFFFF - reg16b) {
-		flags = flags | (1 << 6);
-	}
+	if (reg16a > 0xFFFF - reg16b) flags = flags | (1 << 6);
 	reg16a += reg16b;
+	if (!reg16a) flags = flags | (1 << 5);
 }
 
 /*
@@ -107,258 +103,322 @@ void cop(byte opcode) {
 		case 0xC0:
 			//add al,al
 			addreg8(AL, AL);
+			AX = combine(AL, AH);
 			break;
 		case 0xC1:
 			//add al,cl
 			addreg8(AL, CL);
+			AX = combine(AL, AH);
 			break;
 		case 0xC2:
 			//add al,dl
 			addreg8(AL, DL);
+			AX = combine(AL, AH);
 			break;
 		case 0xC3:
 			//add al,bl
 			addreg8(AL, BL);
+			AX = combine(AL, AH);
 			break;
 		case 0xC4:
 			//add al,ah
 			addreg8(AL, AH);
+			AX = combine(AL, AH);
 			break;
 		case 0xC5:
 			//add al,ch
 			addreg8(AL, CH);
+			AX = combine(AL, AH);
 			break;
 		case 0xC6:
 			//add al,dh
 			addreg8(AL, DH);
+			AX = combine(AL, AH);
 			break;
 		case 0xC7:
 			//add al,bh
 			addreg8(AL, BH);
+			AX = combine(AL, AH);
 			break;
 		case 0xC8:
 			//add cl,al
 			addreg8(CL, AL);
+			CX = combine(CL, CH);
 			break;
 		case 0xC9:
 			//add cl,cl
 			addreg8(CL, CL);
+			CX = combine(CL, CH);
 			break;
 		case 0xCA:
 			//add cl,dl
 			addreg8(CL, DL);
+			CX = combine(CL, CH);
 			break;
 		case 0xCB:
 			//add cl,bl
 			addreg8(CL, BL);
+			CX = combine(CL, CH);
 			break;
 		case 0xCC:
 			//add cl,ah
 			addreg8(CL, AH);
+			CX = combine(CL, CH);
 			break;
 		case 0xCD:
 			//add cl,ch
 			addreg8(CL, CH);
+			CX = combine(CL, CH);
 			break;
 		case 0xCE:
 			//add cl,dh
 			addreg8(CL, DH);
+			CX = combine(CL, CH);
 			break;
 		case 0xCF:
 			//add cl,bh
 			addreg8(CL, BH);
+			CX = combine(CL, CH);
 			break;
 		case 0xD0:
 			//add dl,al
 			addreg8(DL, AL);
+			DX = combine(DL, DH);
 			break;
 		case 0xD1:
 			//add dl,cl
 			addreg8(DL, CL);
+			DX = combine(DL, DH);
 			break;
 		case 0xD2:
 			//add dl,dl
 			addreg8(DL, DL);
+			DX = combine(DL, DH);
 			break;
 		case 0xD3:
 			//add dl,bl
 			addreg8(DL, BL);
+			DX = combine(DL, DH);
 			break;
 		case 0xD4:
 			//add dl,ah
 			addreg8(DL, AH);
+			DX = combine(DL, DH);
 			break;
 		case 0xD5:
 			//add dl,ch
 			addreg8(DL, CH);
+			DX = combine(DL, DH);
 			break;
 		case 0xD6:
 			//add dl,dh
 			addreg8(DL, DH);
+			DX = combine(DL, DH);
 			break;
 		case 0xD7:
 			//add dl,bh
 			addreg8(DL, BH);
+			DX = combine(DL, DH);
 			break;
 		case 0xD8:
 			//add bl,al
 			addreg8(BL, AL);
+			BX = combine(BL, BH);
 			break;
 		case 0xD9:
 			//add bl,cl
 			addreg8(BL, CL);
+			BX = combine(BL, BH);
 			break;
 		case 0xDA:
 			//add bl,dl
 			addreg8(BL, DL);
+			BX = combine(BL, BH);
 			break;
 		case 0xDB:
 			//add bl,bl
 			addreg8(BL, BL);
+			BX = combine(BL, BH);
 			break;
 		case 0xDC:
 			//add bl,ah
 			addreg8(BL, AH);
+			BX = combine(BL, BH);
 			break;
 		case 0xDD:
 			//add bl,ch
 			addreg8(BL, CH);
+			BX = combine(BL, BH);
 			break;
 		case 0xDE:
 			//add bl,dh
 			addreg8(BL, DH);
+			BX = combine(BL, BH);
 			break;
 		case 0xDF:
 			//add bl,bh
 			addreg8(BL, BH);
+			BX = combine(BL, BH);
 			break;
 		case 0xE0:
 			//add ah,al
 			addreg8(AH, AL);
+			AX = combine(AL, AH);
 			break;
 		case 0xE1:
 			//add ah,cl
 			addreg8(AH, CL);
+			AX = combine(AL, AH);
 			break;
 		case 0xE2:
 			//add ah,dl
 			addreg8(AH, DL);
+			AX = combine(AL, AH);
 			break;
 		case 0xE3:
 			//add ah,bl
 			addreg8(AH, BL);
+			AX = combine(AL, AH);
 			break;
 		case 0xE4:
 			//add ah,ah
 			addreg8(AH, AH);
+			AX = combine(AL, AH);
 			break;
 		case 0xE5:
 			//add ah,ch
 			addreg8(AH, CH);
+			AX = combine(AL, AH);
 			break;
 		case 0xE6:
 			//add ah,dh
 			addreg8(AH, CH);
+			AX = combine(AL, AH);
 			break;
 		case 0xE7:
 			//add ah,bh
 			addreg8(AH, BH);
+			AX = combine(AL, AH);
 			break;
 		case 0xE8:
 			//add ch,al
 			addreg8(CH, AL);
+			CX = combine(CL, CH);
 			break;
 		case 0xE9:
 			//add ch,cl
 			addreg8(CH, CL);
+			CX = combine(CL, CH);
 			break;
 		case 0xEA:
 			//add ch,dl
 			addreg8(CH, DL);
+			CX = combine(CL, CH);
 			break;
 		case 0xEB:
 			//add ch,bl
 			addreg8(CH, BL);
+			CX = combine(CL, CH);
 			break;
 		case 0xEC:
 			//add ch,ah
 			addreg8(CH, AH);
+			CX = combine(CL, CH);
 			break;
 		case 0xED:
 			//add ch,ch
 			addreg8(CH, CH);
+			CX = combine(CL, CH);
 			break;
 		case 0xEE:
 			//add ch,dh
 			addreg8(CH, DH);
+			CX = combine(CL, CH);
 			break;
 		case 0xEF:
 			//add ch,bh
 			addreg8(CH, BH);
+			CX = combine(CL, CH);
 			break;
 		case 0xF0:
 			//add dh,al
 			addreg8(DH, AL);
+			DX = combine(DL, DH);
 			break;
 		case 0xF1:
 			//add dh,cl
 			addreg8(DH, CL);
+			DX = combine(DL, DH);
 			break;
 		case 0xF2:
 			//add dh,dl
 			addreg8(DH, DL);
+			DX = combine(DL, DH);
 			break;
 		case 0xF3:
 			//add dh,bl
 			addreg8(DH, BL);
+			DX = combine(DL, DH);
 			break;
 		case 0xF4:
 			//add dh,ah
 			addreg8(DH, AH);
+			DX = combine(DL, DH);
 			break;
 		case 0xF5:
 			//add dh,ch
 			addreg8(DH, CH);
+			DX = combine(DL, DH);
 			break;
 		case 0xF6:
 			//add dh,dh
 			addreg8(DH, AH);
+			DX = combine(DL, DH);
 			break;
 		case 0xF7:
 			//add dh,bh
 			addreg8(DH, BH);
+			DX = combine(DL, DH);
 			break;
 		case 0xF8:
 			//add bh,al
 			addreg8(BH, AL);
+			BX = combine(BL, BH);
 			break;
 		case 0xF9:
 			//add bh,cl
 			addreg8(BH, CL);
+			BX = combine(BL, BH);
 			break;
 		case 0xFA:
 			//add bh,dl
 			addreg8(BH, DL);
+			BX = combine(BL, BH);
 			break;
 		case 0xFB:
 			//add bh,bl
 			addreg8(BH, BL);
+			BX = combine(BL, BH);
 			break;
 		case 0xFC:
 			//add bh,ah
 			addreg8(BH, AH);
+			BX = combine(BL, BH);
 			break;
 		case 0xFD:
 			//add bh,ch
 			addreg8(BH, CH);
+			BX = combine(BL, BH);
 			break;
 		case 0xFE:
 			//add bh,dh
 			addreg8(BH, DH);
+			BX = combine(BL, BH);
 			break;
 		case 0xFF:
 			//add bh,bh
 			addreg8(BH, BH);
+			BX = combine(BL, BH);
 			break;
 		}
 		break;
@@ -719,41 +779,49 @@ void cop(byte opcode) {
 		//mov AL,imm8
 		opcode = code[IP++];
 		AL = opcode;
+		AX = combine(AL, AH);
 		break;
 	case 0xB1:
 		//mov CL,imm8
 		opcode = code[IP++];
 		CL = opcode;
+		CX = combine(CL, CH);
 		break;
 	case 0xB2:
 		//mov DL,imm8
 		opcode = code[IP++];
 		DL = opcode;
+		DX = combine(DL, DH);
 		break;
 	case 0xB3:
 		//mov BL,imm8
 		opcode = code[IP++];
 		BL = opcode;
+		BX = combine(BL, BH);
 		break;
 	case 0xB4:
 		//mov AH,imm8
 		opcode = code[IP++];
 		AH = opcode;
+		AX = combine(AL, AH);
 		break;
 	case 0xB5:
 		//mov CH,imm8
 		opcode = code[IP++];
 		CH = opcode;
+		CX = combine(CL, CH);
 		break;
 	case 0xB6:
 		//mov DH,imm8
 		opcode = code[IP++];
 		DH = opcode;
+		DX = combine(DL, DH);
 		break;
 	case 0xB7:
 		//mov BH,imm8
 		opcode = code[IP++];
 		BH = opcode;
+		BX = combine(BL, BH);
 		break;
 	case 0xB8:
 		//mov AX,imm16
@@ -813,7 +881,7 @@ void cop(byte opcode) {
 int main(int argc, char* argv[]) {
 	FILE* f;
 	if (OS) {
-		f = fopen("C:\\csc210\\SAMPLE.COM", "rb");
+		f = fopen("C:\\csc210\\SAMPLE3.COM", "rb");
 		if (!f) {
 			printf("fopen could not read this file in 'rb' mode");
 			return -1;
@@ -954,6 +1022,7 @@ int main(int argc, char* argv[]) {
 				//movsx reg32, mem16
 				break;
 			}
+
 			break;
 		case 0xf2:
 			//repne/repnz
