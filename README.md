@@ -8,7 +8,8 @@ CSc 210 limited x86 emulator
 
 INFO:
 set OS = false if using g++ to compile.
-Then run program as follows with .COM file in same directory as program: ./a.out sample.com
+Then run program as follows with .COM file in same directory as program: 
+./a.out sample.com
 
 flags bit position 7 = CF
 flags bit position 6 = ZF
