@@ -17,7 +17,7 @@
 */
 
 #define _CRT_SECURE_NO_DEPRECATE
-#define OS true //true if using microsoft visual studio, false if using g++
+#define OS false //true if using microsoft visual studio, false if using g++
 #define MAXCODE 0x100000
 #include <iostream>
 
@@ -873,19 +873,19 @@ int main(int argc, char* argv[]) {
 	if (OS) {
 		f = fopen("C:\\csc210\\SAMPLE4.COM", "rb");
 		if (!f) {
-			printf("fopen could not read this file in 'rb' mode");
+			printf("fopen could not read this file in 'rb' mode. Check to make sure the name of the .com file in this directory that you're passing into the program is correct.");
 			return -1;
 		}
 	}
 	else {
 		if (argc < 2) {
-			printf("Compile like this: g++ Emulator.cpp\n");
-			printf("Pass the path to the .com file if in same directory like this: ./a.out SAMPLE2.com\n");
+			printf("Compile like this:\ng++ Emulator.cpp\n");
+			printf("Pass the name to the .com file in same directory like this:\n./a.out SAMPLE2.com\n");
 			return -1;
 		}
 		f = fopen(argv[1], "rb");
 		if (!f) {
-			printf("fopen could not read this file in 'rb' mode");
+			printf("fopen could not read this file in 'rb' mode. Check to make sure the name of the .com file in this directory that you're passing into the program is correct.");
 			return -1;
 		}
 	}
