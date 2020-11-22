@@ -4,16 +4,16 @@
 * Prof. Vulis
 * 11/21/2020
 * CSc 210 limited x86 emulator
-* 
+*
 * INFO:
-* set OS = false if using g++ to compile. 
+* set OS = false if using g++ to compile.
 * Then run program as follows with .COM file in same directory as program: ./a.out sample.com
-* 
+*
 * flags bit position 7 = CF
 * flags bit position 6 = ZF
-* 
+*
 * The registers printed in terminal are in hex
-* 
+*
 */
 
 #define _CRT_SECURE_NO_DEPRECATE
@@ -24,7 +24,7 @@
 typedef unsigned char byte;
 typedef unsigned short word;
 
-byte AL=0x00, AH = 0x00, BL = 0x00, BH = 0x00, CL = 0x00, CH = 0x00, DL = 0x00, DH = 0x00;
+byte AL = 0x00, AH = 0x00, BL = 0x00, BH = 0x00, CL = 0x00, CH = 0x00, DL = 0x00, DH = 0x00;
 word AX = 0x0000, CX = 0x0000, DX = 0x0000, BX = 0x0000, SP = 0x0000, BP = 0x0000, SI = 0x0000, DI = 0x0000;
 word flags = 0x0000, IP = 0x0000, ES = 0x0000, SS = 0x0000, DS = 0x0000, CS = 0x0000;
 
@@ -60,7 +60,7 @@ void printBits(size_t const size, void const* const ptr)
 void addreg8(byte& reg8a, byte& reg8b) {
 	if (reg8a > 0xFF - reg8b) flags = flags | (1 << 6);
 	reg8a += reg8b;
-	if(!reg8a) flags = flags | (1 << 5);
+	if (!reg8a) flags = flags | (1 << 5);
 }
 
 void addreg16(word& reg16a, word& reg16b, byte& reg8al, byte& reg8ah, byte& reg8bl, byte& reg8bh) {
@@ -78,8 +78,8 @@ void addreg16s(word& reg16a, word& reg16b) {
 }
 
 /*
-* 
-* 
+*
+*
 * 00,01,02,03,04,05
 10,11,12,13,14,15
 70,71,72,73,74,75,76,77,78,79,7a,7b,7c,7d,7e,7f
@@ -88,9 +88,9 @@ void addreg16s(word& reg16a, word& reg16b) {
 91,92,93,94,95,96,97,98,99,9a,9c,9d,a0,a1,a2,a3,a4,a5,a6,a7
 c6,c7
 e2
-* 
-* 
-* 
+*
+*
+*
 */
 
 
@@ -687,22 +687,19 @@ void cop(byte opcode) {
 	case 0x04:
 		//add al,imm8
 		opcode = code[IP++];
-		if (AL > 0xFF - opcode) {
-			flags = flags | (1 << 6);
-		}
+		if (AL > 0xFF - opcode) flags = flags | (1 << 6);
 		AL += opcode;
-		if(!AL) flags = flags | (1 << 5);
+		if (!AL) flags = flags | (1 << 5);
 		break;
 	case 0x05:
 		//add AX,imm16
 		opcode = code[IP++];
-		if (AX > 0xFFFF - opcode) {
-			flags = flags | (1 << 6);
-		}
+		if (AX > 0xFFFF - opcode) flags = flags | (1 << 6);
 		AL += opcode;
 		opcode = code[IP++];
-		AH += opcode; 
+		AH += opcode;
 		AX = combine(AL, AH);
+		if (!AX) flags = flags | (1 << 5);
 		break;
 	case 0x81:
 		//add reg16,imm16
@@ -714,10 +711,9 @@ void cop(byte opcode) {
 			CL = opcode;
 			opcode = code[IP++];
 			CH = opcode;
-			if (CX > 0xFFFF - combine(CL, CH)) {
-				flags = flags | (1 << 6);
-			}
+			if (CX > 0xFFFF - combine(CL, CH)) flags = flags | (1 << 6);
 			CX += combine(CL, CH);
+			if (!CX) flags = flags | (1 << 5);
 			break;
 		case 0xC2:
 			//add dx,imm16
@@ -725,10 +721,9 @@ void cop(byte opcode) {
 			DL = opcode;
 			opcode = code[IP++];
 			DH = opcode;
-			if (DX > 0xFFFF - combine(DL, DH)) {
-				flags = flags | (1 << 6);
-			}
+			if (DX > 0xFFFF - combine(DL, DH)) flags = flags | (1 << 6);
 			DX += combine(DL, DH);
+			if (!DX) flags = flags | (1 << 5);
 			break;
 		case 0xC3:
 			//add bx,imm16
@@ -736,42 +731,37 @@ void cop(byte opcode) {
 			BL = opcode;
 			opcode = code[IP++];
 			BH = opcode;
-			if (BX > 0xFFFF - combine(BL,BH)) {
-				flags = flags | (1 << 6);
-			}
-			BX += combine(BL,BH);
+			if (BX > 0xFFFF - combine(BL, BH)) flags = flags | (1 << 6);
+			BX += combine(BL, BH);
+			if(!BX) flags = flags | (1 << 5);
 			break;
 		case 0xC4:
 			//add sp,imm16
 			opcode = code[IP++];
-			if (SP > 0xFFFF - combine(opcode, code[IP++])) {
-				flags = flags | (1 << 6);
-			}
-			SP += combine(opcode, code[IP--]);
+			if (SP > 0xFFFF - combine(opcode, code[IP])) flags = flags | (1 << 6);
+			SP += combine(opcode, code[IP++]);
+			if (!SP) flags = flags | (1 << 5);
 			break;
 		case 0xC5:
 			//add bp,imm16
 			opcode = code[IP++];
-			if (BP > 0xFFFF - combine(opcode, code[IP++])) {
-				flags = flags | (1 << 6);
-			}
-			BP += combine(opcode, code[IP--]);
+			if (BP > 0xFFFF - combine(opcode, code[IP])) flags = flags | (1 << 6);
+			BP += combine(opcode, code[IP++]);
+			if (!BP) flags = flags | (1 << 5);
 			break;
 		case 0xC6:
 			//add si,imm16
 			opcode = code[IP++];
-			if (SI > 0xFFFF - combine(opcode, code[IP++])) {
-				flags = flags | (1 << 6);
-			}
-			SI += combine(opcode, code[IP--]);
+			if (SI > 0xFFFF - combine(opcode, code[IP])) flags = flags | (1 << 6);
+			SI += combine(opcode, code[IP++]);
+			if (!SI) flags = flags | (1 << 5);
 			break;
 		case 0xC7:
 			//add di,imm16
 			opcode = code[IP++];
-			if (DI > 0xFFFF - combine(opcode, code[IP++])) {
-				flags = flags | (1 << 6);
-			}
-			DI += combine(opcode, code[IP--]);
+			if (DI > 0xFFFF - combine(opcode, code[IP])) flags = flags | (1 << 6);
+			DI += combine(opcode, code[IP++]);
+			if(!DI) flags = flags | (1 << 5);
 			break;
 		}
 		break;
@@ -881,7 +871,7 @@ void cop(byte opcode) {
 int main(int argc, char* argv[]) {
 	FILE* f;
 	if (OS) {
-		f = fopen("C:\\csc210\\SAMPLE3.COM", "rb");
+		f = fopen("C:\\csc210\\SAMPLE4.COM", "rb");
 		if (!f) {
 			printf("fopen could not read this file in 'rb' mode");
 			return -1;
